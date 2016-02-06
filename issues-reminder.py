@@ -4,7 +4,7 @@ from termcolor import colored
 import requests
 import yaml
 
-class IssuesFetcher:
+class GitHubIssuesFetcher:
     def __init__(self, settings_path):
         self.settings = yaml.load(open(settings_path))
         self.api_url = 'https://api.github.com/orgs/{}/issues'
@@ -73,7 +73,7 @@ class Reminder:
     def __init__(self, settings_path, *senders_clss):
         self.settings_path = settings_path
         self.senders_clss = senders_clss
-        self.fetcher = IssuesFetcher(self.settings_path)
+        self.fetcher = GitHubIssuesFetcher(self.settings_path)
 
     def run(self):
         issues = self.fetcher.fetch()
