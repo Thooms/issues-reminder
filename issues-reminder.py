@@ -13,6 +13,7 @@ class IssuesFetcher:
             self.settings['github-token']
         )
         self.params = {'filter': 'all'}
+        self.headers = {'Accept': 'application/vnd.github.v3+json'}
 
     def organize_issues(self, issues):
         d = defaultdict(list)
@@ -28,7 +29,7 @@ class IssuesFetcher:
         orgs = self.settings['github-organizations']
         res = []
         for url in (self.api_url.format(org) for org in orgs):
-            req = requests.get(url, auth=self.auth, params=self.params)
+            req = requests.get(url, auth=self.auth, params=self.params, headers=self.headers)
             res.extend(req.json())
 
         return self.organize_issues(res)
