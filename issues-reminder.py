@@ -52,8 +52,7 @@ class StdOutSender(Sender):
     def send(self):
         for repo_url, issues in self.issues.items():
             repo_txt = colored(
-                # dirty hack to avoid another API call
-                '* {}'.format(repo_url.split('/')[-1]),
+                '* {}'.format(issues[0]["repository"]["name"]),
                 'red',
                 attrs=['bold']
             )
