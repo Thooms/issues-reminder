@@ -1,3 +1,6 @@
 github-token: {{Token provided by https://github.com/settings/tokens}}
 github-username: {{Github username}}
 github-organizations: {{[Atilla-Learn, Atilla106]}}
+slack:
+  api-token: {{Token provided by https://my.slack.com/services/new/bot}}
+  chan: {{Chan on which the bot will post}}
