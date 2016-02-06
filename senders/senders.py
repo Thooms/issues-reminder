@@ -1,3 +1,4 @@
+from jinja2 import Template
 from slacker import Slacker
 from termcolor import colored
 
@@ -19,20 +20,8 @@ class SlackSender(Sender):
         slack.chat.post_message('#bot-test', self.slack_message())
 
     def slack_message(self):
-        # This is ugly a.f. but it works fine.
-        return 'Hello there, here are the open issues and pull requests of the week! :gift:\n{}'.format(
-            '\n'.join([
-                '\n\n• `{}` ({})\n{}'.format(
-                    issues[0]['repository']['name'],
-                    issues[0]['repository']['html_url'],
-                    '\n'.join(['_{}_ ({})'.format(
-                        issue['title'],
-                        issue['html_url']
-                    ) for issue in issues])
-                )
-                for _, issues in self.issues.items()
-            ])
-        )
+        template = Template(open('senders/slack.tpl').read())
+        return template.render(data=self.issues.items())
 
 class StdOutSender(Sender):
     def send(self):
