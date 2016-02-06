@@ -53,13 +53,20 @@ class StdOutSender(Sender):
     def send(self):
         for repo_url, issues in self.issues.items():
             repo_txt = colored(
-                '* {}'.format(issues[0]["repository"]["name"]),
+                '* {} ({})'.format(
+                    issues[0]['repository']['name'],
+                    issues[0]['repository']['html_url']
+                ),
                 'red',
                 attrs=['bold']
             )
             print(repo_txt)
             for issue in issues:
-                print('{} ({})'.format(issue['title'], issue['html_url']))
+                issue_name = colored(
+                    '{}'.format(issue['title']),
+                    'yellow'
+                )
+                print('{} ({})'.format(issue_name, issue['html_url']))
             print()
 
 class Reminder:
