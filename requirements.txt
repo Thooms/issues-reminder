@@ -1,3 +1,4 @@
+daemonize
 jinja2
 pyyaml
 requests

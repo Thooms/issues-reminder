@@ -1,10 +1,11 @@
+from daemonize import Daemonize
 import schedule
 import time
 import yaml
 
-import senders
 import fetchers
 import reminder
+import senders
 
 if __name__ == '__main__':
     r = reminder.Reminder(
@@ -28,6 +29,12 @@ if __name__ == '__main__':
     else:
         raise Exception('Bad time unit in settings.yaml')
 
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    def main_loop():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    pid = '/tmp/issues-reminder.pid'
+    # use foreground=True for debugging
+    daemon = Daemonize(app='issues-reminder', pid=pid, action=main_loop)
+    daemon.start()
