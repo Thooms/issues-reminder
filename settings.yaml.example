@@ -4,3 +4,6 @@ github-organizations: {{[Atilla-Learn, Atilla106]}}
 slack:
   api-token: {{Token provided by https://my.slack.com/services/new/bot}}
   chan: {{Chan on which the bot will post}}
+freq:
+  every: {{some integer}}
+  unit: {{seconds|minutes|hours|days}}
