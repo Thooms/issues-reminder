@@ -1,6 +1,7 @@
 from jinja2 import Template
 from slacker import Slacker
 from termcolor import colored
+import sys
 
 class Sender:
     def __init__(self, settings):
@@ -25,26 +26,30 @@ class SlackSender(Sender):
     def slack_message(self, providers):
         return self.template.render(data=providers)
 
-class StdOutSender(Sender):
+class FileSender(Sender):
+    def __init__(self, settings, fobj=sys.stdout):
+        super().__init__(settings)
+        self.fobj = fobj
+
     def send(self, providers):
         for provider in providers:
             print(colored(
                 'From {}'.format(provider.name),
                 'blue',
                 attrs=['bold']
-            ))
+            ), file=self.fobj)
 
             for repo in provider.repos:
                 repo_txt = colored(
                     '* {} ({})'.format(repo.name, repo.url),
                     'red'
                 )
-                print(repo_txt)
+                print(repo_txt, file=self.fobj)
 
                 for iss in repo.issues:
                     issue_name = colored(
                         '{}'.format(iss.title),
                         'yellow'
                     )
-                    print('{} ({})'.format(issue_name, iss.url))
-                print()
+                    print('{} ({})'.format(issue_name, iss.url), file=self.fobj)
+                print('', file=self.fobj)

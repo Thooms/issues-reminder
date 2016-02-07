@@ -8,6 +8,6 @@ class Reminder:
         self.fetchers = fetchers
 
     def run(self):
-        providers = (f.fetch() for f in self.fetchers)
+        providers = [f.fetch() for f in self.fetchers]
         for sender in self.senders:
              sender.send(providers)

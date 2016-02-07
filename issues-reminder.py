@@ -1,5 +1,6 @@
 from daemonize import Daemonize
 import schedule
+import sys
 import time
 import yaml
 
@@ -12,7 +13,7 @@ if __name__ == '__main__':
 
     gh_fetcher = fetchers.GitHubByOrgsFetcher(settings)
     slack_sender = senders.SlackSender(settings)
-    stdout_sender = senders.StdOutSender(settings)
+    stdout_sender = senders.FileSender(settings, sys.stdout)
 
     r = reminder.Reminder(
         settings,
