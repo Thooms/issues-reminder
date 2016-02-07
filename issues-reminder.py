@@ -14,7 +14,7 @@ if __name__ == '__main__':
     stdout_sender = senders.StdOutSender(settings)
 
     r = reminder.Reminder(
-        'settings.yaml',
+        settings,
         senders=[slack_sender, stdout_sender],
         fetcher_clss=[fetchers.GitHubFetcher]
     )

@@ -1,8 +1,8 @@
 import yaml
 
 class Reminder:
-    def __init__(self, settings_path='', senders=[], fetcher_clss=[]):
-        self.settings = yaml.load(open(settings_path))
+    def __init__(self, settings, senders=[], fetcher_clss=[]):
+        self.settings = settings
         self.senders = senders
         self.fetcher = fetcher_clss[0](self.settings)
 
