@@ -8,13 +8,17 @@ import reminder
 import senders
 
 if __name__ == '__main__':
+    settings = yaml.load(open('settings.yaml'))
+
+    slack_sender = senders.SlackSender(settings)
+    stdout_sender = senders.StdOutSender(settings)
+
     r = reminder.Reminder(
         'settings.yaml',
-        senders_clss=[senders.SlackSender, senders.StdOutSender],
+        senders=[slack_sender, stdout_sender],
         fetcher_clss=[fetchers.GitHubFetcher]
     )
 
-    settings = yaml.load(open('settings.yaml'))
     ev = settings['freq']['every']
     unit = settings['freq']['unit']
 

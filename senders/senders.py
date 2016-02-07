@@ -3,11 +3,10 @@ from slacker import Slacker
 from termcolor import colored
 
 class Sender:
-    def __init__(self, settings, issues):
-        self.issues = issues
+    def __init__(self, settings):
         self.settings = settings
 
-    def send(self):
+    def send(self, issues):
         raise Exception('Please implement this method.')
 
 class MailSender(Sender):
@@ -15,17 +14,20 @@ class MailSender(Sender):
         pass
 
 class SlackSender(Sender):
-    def send(self):
-        slack = Slacker(self.settings['slack']['api-token'])
-        slack.chat.post_message('#bot-test', self.slack_message())
+    def __init__(self, settings):
+        super().__init__(settings)
+        self.template = Template(open('senders/slack.tpl').read())
+        self.slack = Slacker(self.settings['slack']['api-token'])
 
-    def slack_message(self):
-        template = Template(open('senders/slack.tpl').read())
-        return template.render(data=self.issues.items())
+    def send(self, issues):
+        self.slack.chat.post_message('#bot-test', self.slack_message(issues))
+
+    def slack_message(self, issues):
+        return self.template.render(data=issues.items())
 
 class StdOutSender(Sender):
-    def send(self):
-        for _, issues in self.issues.items():
+    def send(self, issues):
+        for _, issues in issues.items():
             repo_txt = colored(
                 '* {} ({})'.format(
                     issues[0]['repository']['name'],
