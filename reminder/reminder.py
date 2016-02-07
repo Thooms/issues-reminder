@@ -1,12 +1,13 @@
+import itertools
 import yaml
 
 class Reminder:
-    def __init__(self, settings, senders=[], fetcher_clss=[]):
+    def __init__(self, settings, senders=[], fetchers=[]):
         self.settings = settings
         self.senders = senders
-        self.fetcher = fetcher_clss[0](self.settings)
+        self.fetchers = fetchers
 
     def run(self):
-        issues = self.fetcher.fetch()
+        providers = (f.fetch() for f in self.fetchers)
         for sender in self.senders:
-             sender.send(issues)
+             sender.send(providers)

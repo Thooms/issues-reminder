@@ -1,9 +1,12 @@
 Hello there, here are the open issues and pull requests of the week! :gift:
 
-{% for _, issues in data %}
-• `{{ issues[0]['repository']['name'] }}` ({{ issues[0]['repository']['html_url'] }})
-{% for issue in issues %}
-_{{ issue['title'] }}_ ({{ issue['html_url'] }})
+{% for provider in data %}
+### From {{ provider.name }}
+{% for repo in provider.repos %}
+• `{{ repo.name }}` ({{ repo.url }})
+{% for issue in repo.issues %}
+_{{ issue.author}}_ *{{ issue.title }}* ({{ issue.url }})
 {% endfor %}
 
+{% endfor %}
 {% endfor %}

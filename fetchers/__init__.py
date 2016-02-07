@@ -1,3 +1,3 @@
 from .fetchers import (
-    GitHubFetcher
+    GitHubByOrgsFetcher
 )

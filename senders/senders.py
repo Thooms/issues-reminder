@@ -6,7 +6,7 @@ class Sender:
     def __init__(self, settings):
         self.settings = settings
 
-    def send(self, issues):
+    def send(self, providers):
         raise Exception('Please implement this method.')
 
 class MailSender(Sender):
@@ -19,28 +19,32 @@ class SlackSender(Sender):
         self.template = Template(open('senders/slack.tpl').read())
         self.slack = Slacker(self.settings['slack']['api-token'])
 
-    def send(self, issues):
-        self.slack.chat.post_message('#bot-test', self.slack_message(issues))
+    def send(self, providers):
+        self.slack.chat.post_message('#bot-test', self.slack_message(providers))
 
-    def slack_message(self, issues):
-        return self.template.render(data=issues.items())
+    def slack_message(self, providers):
+        return self.template.render(data=providers)
 
 class StdOutSender(Sender):
-    def send(self, issues):
-        for _, issues in issues.items():
-            repo_txt = colored(
-                '* {} ({})'.format(
-                    issues[0]['repository']['name'],
-                    issues[0]['repository']['html_url']
-                ),
-                'red',
+    def send(self, providers):
+        for provider in providers:
+            print(colored(
+                'From {}'.format(provider.name),
+                'blue',
                 attrs=['bold']
-            )
-            print(repo_txt)
-            for issue in issues:
-                issue_name = colored(
-                    '{}'.format(issue['title']),
-                    'yellow'
+            ))
+
+            for repo in provider.repos:
+                repo_txt = colored(
+                    '* {} ({})'.format(repo.name, repo.url),
+                    'red'
                 )
-                print('{} ({})'.format(issue_name, issue['html_url']))
-            print()
+                print(repo_txt)
+
+                for iss in repo.issues:
+                    issue_name = colored(
+                        '{}'.format(iss.title),
+                        'yellow'
+                    )
+                    print('{} ({})'.format(issue_name, iss.url))
+                print()

@@ -10,13 +10,14 @@ import senders
 if __name__ == '__main__':
     settings = yaml.load(open('settings.yaml'))
 
+    gh_fetcher = fetchers.GitHubByOrgsFetcher(settings)
     slack_sender = senders.SlackSender(settings)
     stdout_sender = senders.StdOutSender(settings)
 
     r = reminder.Reminder(
         settings,
-        senders=[slack_sender, stdout_sender],
-        fetcher_clss=[fetchers.GitHubFetcher]
+        senders=[stdout_sender, slack_sender],
+        fetchers=[gh_fetcher]
     )
 
     ev = settings['freq']['every']

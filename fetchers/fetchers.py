@@ -2,7 +2,9 @@ from collections import defaultdict
 from requests.auth import HTTPBasicAuth
 import requests
 
-class GitHubFetcher:
+import issues
+
+class GitHubByOrgsFetcher:
     def __init__(self, settings):
         self.settings = settings
         self.api_url = 'https://api.github.com/orgs/{}/issues'
@@ -13,17 +15,30 @@ class GitHubFetcher:
         self.params = {'filter': 'all'}
         self.headers = {'Accept': 'application/vnd.github.v3+json'}
 
-    def organize_issues(self, issues):
+    def organize_issues(self, res):
+        # Gather issues by repo
         d = defaultdict(list)
-        for issue in issues:
-            d[issue['repository_url']].append(issue)
-        return d
+        for r in res:
+            d[r['repository_url']].append(r)
+
+        # Build a correct Provider object
+        provider = issues.Provider('GitHub')
+        for issue_list in d.values():
+            if not issue_list:
+                continue
+            repo = issues.Repository(
+                issue_list[0]['repository']['name'],
+                issue_list[0]['repository']['html_url']
+            )
+            for issue in issue_list:
+                repo.add_issue(
+                    issues.Issue(issue['title'], issue['html_url'], issue['user']['login'])
+                )
+            provider.add_repository(repo)
+        return provider
+
 
     def fetch(self):
-        """
-        Fetches the raw issues data, and returns it organized it by
-        organization/repo.
-        """
         orgs = self.settings['github-organizations']
         res = []
         for url in (self.api_url.format(org) for org in orgs):
