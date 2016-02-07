@@ -9,8 +9,8 @@ class GitHubByOrgsFetcher:
         self.settings = settings
         self.api_url = 'https://api.github.com/orgs/{}/issues'
         self.auth = HTTPBasicAuth(
-            self.settings['github-username'],
-            self.settings['github-token']
+            self.settings['providers']['github-orgs']['username'],
+            self.settings['providers']['github-orgs']['auth-token']
         )
         self.params = {'filter': 'all'}
         self.headers = {'Accept': 'application/vnd.github.v3+json'}
@@ -39,7 +39,7 @@ class GitHubByOrgsFetcher:
 
 
     def fetch(self):
-        orgs = self.settings['github-organizations']
+        orgs = self.settings['providers']['github-orgs']['organizations']
         res = []
         for url in (self.api_url.format(org) for org in orgs):
             req = requests.get(url, auth=self.auth, params=self.params, headers=self.headers)
