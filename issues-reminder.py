@@ -1,46 +1,22 @@
-from daemonize import Daemonize
-import schedule
 import sys
-import time
-import yaml
 
 import fetchers
 import reminder
 import senders
 
 if __name__ == '__main__':
-    settings = yaml.load(open('settings.yaml'))
-
-    gh_fetcher = fetchers.GitHubByOrgsFetcher(settings)
-    slack_sender = senders.SlackSender(settings)
-    stdout_sender = senders.FileSender(settings, sys.stdout)
+    gh_fetcher = fetchers.GitHubByOrgsFetcher(
+        username='Thooms',
+        token='fd34d109730ffb482ad9962ae829d9caa4e23f68',
+        organizations=['Atilla-Learn', 'Atilla106']
+    )
+    slack_sender = senders.SlackSender('xoxb-20530661910-pnKWmRNf2ofvwzjNkrvmU9mx', ['#bot-test'])
+    stdout_sender = senders.FileSender(sys.stdout)
 
     r = reminder.Reminder(
-        settings,
         senders=[stdout_sender, slack_sender],
-        fetchers=[gh_fetcher]
+        fetchers=[gh_fetcher],
+        frequence=(5, 'seconds')
     )
 
-    ev = settings['freq']['every']
-    unit = settings['freq']['unit']
-
-    if unit == 'seconds':
-        schedule.every(ev).seconds.do(r.run)
-    elif unit == 'minutes':
-        schedule.every(ev).minutes.do(r.run)
-    elif unit == 'hours':
-        schedule.every(ev).hours.do(r.run)
-    elif unit == 'days':
-        schedule.every(ev).days.do(r.run)
-    else:
-        raise Exception('Bad time unit in settings.yaml')
-
-    def main_loop():
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-
-    pid = '/tmp/issues-reminder.pid'
-    # use foreground=True for debugging
-    daemon = Daemonize(app='issues-reminder', pid=pid, action=main_loop)
-    daemon.start()
+    r.run()
