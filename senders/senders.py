@@ -4,9 +4,6 @@ from termcolor import colored
 import sys
 
 class Sender:
-    def __init__(self, settings):
-        self.settings = settings
-
     def send(self, providers):
         raise Exception('Please implement this method.')
 
@@ -15,20 +12,20 @@ class MailSender(Sender):
         pass
 
 class SlackSender(Sender):
-    def __init__(self, settings):
-        super().__init__(settings)
+    def __init__(self, slack_api_token, chans):
+        self.chans = chans
         self.template = Template(open('senders/slack.tpl').read())
-        self.slack = Slacker(self.settings['slack']['api-token'])
+        self.slack = Slacker(slack_api_token)
 
     def send(self, providers):
-        self.slack.chat.post_message('#bot-test', self.slack_message(providers))
+        for chan in self.chans:
+            self.slack.chat.post_message(chan, self.slack_message(providers))
 
     def slack_message(self, providers):
         return self.template.render(data=providers)
 
 class FileSender(Sender):
-    def __init__(self, settings, fobj=sys.stdout):
-        super().__init__(settings)
+    def __init__(self, fobj=sys.stdout):
         self.fobj = fobj
 
     def send(self, providers):

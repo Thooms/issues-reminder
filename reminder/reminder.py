@@ -5,8 +5,7 @@ import time
 import yaml
 
 class Reminder:
-    def __init__(self, settings, senders=[], fetchers=[], frequence=None):
-        self.settings = settings
+    def __init__(self, senders=[], fetchers=[], frequence=None):
         self.senders = senders
         self.fetchers = fetchers
         self.frequence = frequence
