@@ -1,7 +1,4 @@
-from daemonize import Daemonize
-import schedule
 import sys
-import time
 import yaml
 
 import fetchers
@@ -18,29 +15,8 @@ if __name__ == '__main__':
     r = reminder.Reminder(
         settings,
         senders=[stdout_sender, slack_sender],
-        fetchers=[gh_fetcher]
+        fetchers=[gh_fetcher],
+        frequence=(5, 'seconds')
     )
 
-    ev = settings['freq']['every']
-    unit = settings['freq']['unit']
-
-    if unit == 'seconds':
-        schedule.every(ev).seconds.do(r.run)
-    elif unit == 'minutes':
-        schedule.every(ev).minutes.do(r.run)
-    elif unit == 'hours':
-        schedule.every(ev).hours.do(r.run)
-    elif unit == 'days':
-        schedule.every(ev).days.do(r.run)
-    else:
-        raise Exception('Bad time unit in settings.yaml')
-
-    def main_loop():
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-
-    pid = '/tmp/issues-reminder.pid'
-    # use foreground=True for debugging
-    daemon = Daemonize(app='issues-reminder', pid=pid, action=main_loop)
-    daemon.start()
+    r.start_daemon()
