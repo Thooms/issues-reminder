@@ -1,4 +1,4 @@
-Hello there, here are the open issues and pull requests of the week! :gift:
+Hello @everyone ! Here are the open issues and pull requests of the week! :gift:
 
 {% for provider in data %}
 ### From {{ provider.name }}
