@@ -1,3 +1,4 @@
 from .fetchers import (
-    GitHubByOrgsFetcher
+    GitHubByOrgsFetcher,
+    GitLabByRepoFetcher
 )

@@ -42,3 +42,40 @@ class GitHubByOrgsFetcher:
             res.extend(req.json())
 
         return self.organize_issues(res)
+
+class GitLabByRepoFetcher:
+    def __init__(self, gitlab_url='', gitlab_token='', repos=[]):
+        self.gitlab_url = gitlab_url
+        self.gitlab_token = gitlab_token
+        self.repos_names = repos
+
+    def call_gitlab_api(self, endpoint):
+        return requests.get(
+            '{}/api/v3/{}'.format(self.gitlab_url, endpoint),
+            headers={'PRIVATE-TOKEN': self.gitlab_token}
+        )
+
+    def fetch_repos_metadata(self):
+        self.repos_metadata = []
+        for name in self.repos_names:
+            req = self.call_gitlab_api('projects/{}'.format(name.replace('/', '%2F')))
+            if req.status_code == 200:
+                self.repos_metadata.append(req.json())
+
+    def fetch(self):
+        self.fetch_repos_metadata()
+
+        provider = issues.Provider('Gitlab')
+        for repo in self.repos_metadata:
+            req = self.call_gitlab_api('projects/{}/issues'.format(repo['id']))
+            if req.status_code == 200:
+                rep = issues.Repository(repo['name_with_namespace'], repo['web_url'])
+                for issue in req.json():
+                    if issue['state'] == 'opened':
+                        rep.add_issue(issues.Issue(
+                            issue['title'],
+                            '{}/issues/{}'.format(repo['web_url'], issue['iid']),
+                            issue['author']['username']
+                        ))
+                provider.add_repository(rep)
+        return provider

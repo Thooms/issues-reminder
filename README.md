@@ -22,17 +22,30 @@ import senders
 
 ## Fetchers
 
-Those are the units that fetch project issues. There's currently only
-one implemented, the `GitHubByOrgsFetcher`, which process the set of
-issues in one or many GitHub organizations.
+Those are the units that fetch project issues.
 
-You define it like this:
+### Fetch GitHub issues
+
+It is used to fetch all the issues belonging to a list of
+organizations.  You define it like this:
 
 ```
 gh_fetcher = fetchers.GitHubByOrgsFetcher(
         username='YourGitHubUsernale',
         token='YourGithubAccessToken',
         organizations=['A', 'List', 'Of', 'Organizations']
+)
+```
+
+### Fetch GitLab issues
+
+It is used to fetch all the issues for a list of repository.
+
+```
+gl_fetcher = fetchers.GitLabByRepoFetcher(
+    gitlab_url='https://gitlab.com',
+    gitlab_token='YourGitLabToken',
+    repos=['Thooms/metadata-ws', 'NameSpace/repo']
 )
 ```
 
@@ -73,7 +86,7 @@ You have to use the `Reminder` class:
 ```
 r = reminder.Reminder(
         senders=[stdout_sender, slack_sender, mail_sender],
-        fetchers=[gh_fetcher],
+        fetchers=[gh_fetcher, gl_fetcher],
         frequence=(5, 'seconds')
 )
 ```
