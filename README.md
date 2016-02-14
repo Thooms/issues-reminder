@@ -49,6 +49,14 @@ You can use the `SlackSender` like this:
 slack_sender = senders.SlackSender('YouSlackToken', ['#chan1', '#chan2'])
 ```
 
+### Send by Mail
+
+You can use the `MailSender` like this:
+
+```
+mail_sender = senders.MailSender('smtp.example.com', 'from@example.com', 'to@exemple.com')
+```
+
 ### Print on terminal/send to file
 
 You can use the `FileSender` like this:
@@ -64,7 +72,7 @@ You have to use the `Reminder` class:
 
 ```
 r = reminder.Reminder(
-        senders=[stdout_sender, slack_sender],
+        senders=[stdout_sender, slack_sender, mail_sender],
         fetchers=[gh_fetcher],
         frequence=(5, 'seconds')
 )
