@@ -1,6 +1,5 @@
 daemonize
 jinja2
-pyyaml
 requests
 schedule
 slacker
