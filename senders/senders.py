@@ -1,6 +1,8 @@
+from email.mime.text import MIMEText
 from jinja2 import Template
 from slacker import Slacker
 from termcolor import colored
+import smtplib
 import sys
 
 class Sender:
@@ -8,8 +10,20 @@ class Sender:
         raise Exception('Please implement this method.')
 
 class MailSender(Sender):
-    def send(self):
-        pass
+    def __init__ (self, smtp_server, sender_address, recipient_address):
+        self.template = Template(open('senders/mail.tpl').read())
+        self.smtp = smtp_server
+        self.msg_from = sender_address
+        self.msg_to = recipient_address
+
+    def send(self, providers):
+        msg = MIMEText(self.template.render(data=providers))
+        msg['Subject'] = 'Issues reminder'
+        msg['From'] = self.msg_from
+        msg['To'] = self.msg_to
+        s = smtplib.SMTP(self.smtp)
+        s.send_message(msg)
+        s.quit()
 
 class SlackSender(Sender):
     def __init__(self, slack_api_token, chans):
