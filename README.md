@@ -90,6 +90,15 @@ r = reminder.Reminder(
         frequence=(5, 'seconds')
 )
 ```
+Alternatively, you can precise separate frequencies for each sender. Note that the senders and linked frequencies must be in the same order.
+
+```
+r = reminder.Reminder(
+        senders=[stdout_sender, slack_sender, mail_sender],
+        fetchers=[gh_fetcher, gl_fetcher],
+        frequence=[(5, 'seconds'), (7, 'days'), (2, 'hours')]
+)
+```
 
 Then you can either use `r.run()` for a one-time run, or
 `r.start_daemon()` to schedule it and start it as a background
