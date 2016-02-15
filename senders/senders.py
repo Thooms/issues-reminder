@@ -10,11 +10,15 @@ class Sender:
         raise Exception('Please implement this method.')
 
 class MailSender(Sender):
-    def __init__ (self, smtp_server, sender_address, recipient_address):
+    def __init__ (self, ev, unit, smtp_server, sender_address, recipient_address):
+        if unit not in ['seconds', 'minutes', 'hours', 'days']:
+            raise Exception('Bad scheduling information provided')
         self.template = Template(open('senders/mail.tpl').read())
         self.smtp = smtp_server
         self.msg_from = sender_address
         self.msg_to = recipient_address
+        self.schedule_unit = unit
+        self.schedule_ev = ev
 
     def send(self, providers):
         msg = MIMEText(self.template.render(data=providers))
@@ -26,10 +30,14 @@ class MailSender(Sender):
         s.quit()
 
 class SlackSender(Sender):
-    def __init__(self, slack_api_token, chans):
+    def __init__(self, ev, unit, slack_api_token, chans):
+        if unit not in ['seconds', 'minutes', 'hours', 'days']:
+            raise Exception('Bad scheduling information provided')
         self.chans = chans
         self.template = Template(open('senders/slack.tpl').read())
         self.slack = Slacker(slack_api_token)
+        self.schedule_unit = unit
+        self.schedule_ev = ev
 
     def send(self, providers):
         for chan in self.chans:
@@ -39,8 +47,12 @@ class SlackSender(Sender):
         return self.template.render(data=providers)
 
 class FileSender(Sender):
-    def __init__(self, fobj=sys.stdout):
+    def __init__(self, ev, unit, fobj=sys.stdout):
+        if unit not in ['seconds', 'minutes', 'hours', 'days']:
+            raise Exception('Bad scheduling information provided')
         self.fobj = fobj
+        self.schedule_unit = unit
+        self.schedule_ev = ev
 
     def send(self, providers):
         for provider in providers:
