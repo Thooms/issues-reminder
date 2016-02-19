@@ -4,10 +4,9 @@ import schedule
 import time
 
 class Reminder:
-    def __init__(self, senders=[], fetchers=[], frequence=None):
+    def __init__(self, senders=[], fetchers=[]):
         self.senders = senders
         self.fetchers = fetchers
-        self.frequence = frequence
 
     def run(self):
         providers = [f.fetch() for f in self.fetchers]
@@ -30,14 +29,14 @@ class Reminder:
             def r():
                 providers = [f.fetch() for f in self.fetchers]
                 sender.send(providers)
-            schedule(r,ev,unit)
+            self.schedule(r, ev, unit)
 
-    def main_loop():
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+        def main_loop():
+            while True:
+                schedule.run_pending()
+                time.sleep(1)
 
-    pidfile = '/tmp/issues-reminder.pid'
+        pidfile = '/tmp/issues-reminder.pid'
 
-    daemon = Daemonize(app='issues-reminder', pid=pidfile, action=main_loop)
-    daemon.start()
+        daemon = Daemonize(app='issues-reminder', pid=pidfile, action=main_loop)
+        daemon.start()
