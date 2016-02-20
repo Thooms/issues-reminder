@@ -13,7 +13,7 @@ class Reminder:
         for sender in self.senders:
              sender.send(providers)
 
-    def schedule(self,r,ev,unit):
+    def schedule(self, r, ev, unit):
         if unit == 'seconds':
             schedule.every(ev).seconds.do(r)
         elif unit == 'minutes':
@@ -40,3 +40,16 @@ class Reminder:
 
         daemon = Daemonize(app='issues-reminder', pid=pidfile, action=main_loop)
         daemon.start()
+
+    def test_run(self):
+        for sender in self.senders:
+            ev, unit = sender.schedule_ev, sender.schedule_unit
+            def r():
+                providers = [f.fetch() for f in self.fetchers]
+                sender.send(providers)
+            self.schedule(r, ev, unit)
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
