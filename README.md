@@ -78,7 +78,7 @@ You can use the `FileSender` like this:
 
 ```
 stdout_sender = senders.FileSender(2, 'hours', sys.stdout)
-logfile_sender = senders.FileSender(open('myLogFile.log', 'w'))
+logfile_sender = senders.FileSender(2, 'minutes', open('myLogFile.log', 'w'))
 ```
 
 ## Gluing it all together
