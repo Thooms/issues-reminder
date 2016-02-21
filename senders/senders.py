@@ -6,19 +6,20 @@ import smtplib
 import sys
 
 class Sender:
-    def send(self, providers):
-        raise Exception('Please implement this method.')
-
-    def scheduleCheck(self, ev, unit):
+    def __init__(self, ev, unit):
         if unit not in ['seconds', 'minutes', 'hours', 'days']:
             raise Exception('Bad scheduling information provided')
         else:
             self.schedule_ev = ev
             self.schedule_unit = unit
 
+    def send(self, providers):
+        raise Exception('Please implement this method.')
+
+
 class MailSender(Sender):
     def __init__ (self, ev, unit, smtp_server, sender_address, recipient_address):
-        self.scheduleCheck(ev,unit)
+        super().__init__(ev, unit)
         self.template = Template(open('senders/mail.tpl').read())
         self.smtp = smtp_server
         self.msg_from = sender_address
@@ -35,7 +36,7 @@ class MailSender(Sender):
 
 class SlackSender(Sender):
     def __init__(self, ev, unit, slack_api_token, chans):
-        self.scheduleCheck(ev,unit)
+        super().__init__(ev, unit)
         self.chans = chans
         self.template = Template(open('senders/slack.tpl').read())
         self.slack = Slacker(slack_api_token)
@@ -49,7 +50,7 @@ class SlackSender(Sender):
 
 class FileSender(Sender):
     def __init__(self, ev, unit, fobj=sys.stdout):
-        self.scheduleCheck(ev,unit)
+        super().__init__(ev, unit)
         self.fobj = fobj
 
     def send(self, providers):
