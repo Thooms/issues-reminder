@@ -4,3 +4,4 @@ requests
 schedule
 slacker
 termcolor
+pyyaml
