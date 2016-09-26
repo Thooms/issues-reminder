@@ -53,13 +53,15 @@ gl_fetcher = fetchers.GitLabByRepoFetcher(
 
 Those are the units that output the list of issues fetched. Two of
 them are provided for now.
+The time interval in which a sender is called is precised as the
+first two arguments of the constructors.
 
 ### Send to Slack
 
 You can use the `SlackSender` like this:
 
 ```
-slack_sender = senders.SlackSender('YouSlackToken', ['#chan1', '#chan2'])
+slack_sender = senders.SlackSender(5, 'seconds', 'YourSlackToken', ['#chan1', '#chan2'])
 ```
 
 ### Send by Mail
@@ -67,7 +69,7 @@ slack_sender = senders.SlackSender('YouSlackToken', ['#chan1', '#chan2'])
 You can use the `MailSender` like this:
 
 ```
-mail_sender = senders.MailSender('smtp.example.com', 'from@example.com', 'to@exemple.com')
+mail_sender = senders.MailSender(7, 'days', 'smtp.example.com', 'from@example.com', 'to@exemple.com')
 ```
 
 ### Print on terminal/send to file
@@ -75,8 +77,8 @@ mail_sender = senders.MailSender('smtp.example.com', 'from@example.com', 'to@exe
 You can use the `FileSender` like this:
 
 ```
-stdout_sender = senders.FileSender(sys.stdout)
-logfile_sender = senders.FileSender(open('myLogFile.log', 'w'))
+stdout_sender = senders.FileSender(2, 'hours', sys.stdout)
+logfile_sender = senders.FileSender(2, 'minutes', open('myLogFile.log', 'w'))
 ```
 
 ## Gluing it all together
@@ -87,7 +89,6 @@ You have to use the `Reminder` class:
 r = reminder.Reminder(
         senders=[stdout_sender, slack_sender, mail_sender],
         fetchers=[gh_fetcher, gl_fetcher],
-        frequence=(5, 'seconds')
 )
 ```
 
